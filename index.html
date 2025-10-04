@@ -94,6 +94,27 @@
 
     #qrcode {
       margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    #downloadBtn {
+      display: none;
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    #downloadBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(124, 58, 237, 0.4);
     }
 
     .mode-switch {
@@ -121,22 +142,27 @@
     <input type="text" id="qrText" placeholder="Enter link or text here..." />
     <button onclick="generateQR()">Generate QR</button>
     <div id="qrcode"></div>
-    <div class="mode-switch" onclick="toggleMode()">
-      🌞 / 🌙 Toggle Mode
-    </div>
+    <button id="downloadBtn" onclick="downloadQR()">Download QR</button>
+    <div class="mode-switch" onclick="toggleMode()">🌞 / 🌙 Toggle Mode</div>
     <div class="credit">Made with 💜 by Aswin</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script>
     let darkMode = false;
+    let qrGenerated = false;
 
     function generateQR() {
       const qrText = document.getElementById("qrText").value.trim();
       const qrContainer = document.getElementById("qrcode");
+      const downloadBtn = document.getElementById("downloadBtn");
+
       qrContainer.innerHTML = "";
+      downloadBtn.style.display = "none";
+
       if (!qrText) return alert("Please enter a link or text!");
-      new QRCode(qrContainer, {
+
+      const qr = new QRCode(qrContainer, {
         text: qrText,
         width: 180,
         height: 180,
@@ -144,15 +170,26 @@
         colorLight: darkMode ? "#1a1a22" : "#ffffff",
         correctLevel: QRCode.CorrectLevel.H,
       });
+
+      setTimeout(() => {
+        downloadBtn.style.display = "block";
+        qrGenerated = true;
+      }, 300);
+    }
+
+    function downloadQR() {
+      const canvas = document.querySelector("#qrcode canvas");
+      if (!canvas) return;
+      const link = document.createElement("a");
+      link.download = "QR-Sonuzz.png";
+      link.href = canvas.toDataURL();
+      link.click();
     }
 
     function toggleMode() {
       document.body.classList.toggle("dark");
       darkMode = !darkMode;
-      const qrContainer = document.getElementById("qrcode");
-      if (qrContainer.innerHTML.trim() !== "") {
-        generateQR();
-      }
+      if (qrGenerated) generateQR();
     }
   </script>
 </body>
