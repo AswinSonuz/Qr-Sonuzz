@@ -2,237 +2,229 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR-Sonuzz Pro | Create & Scan</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>QR-Sonuzz Mobile Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #8B5CF6;
-      --bg: #050505;
-      --panel: rgba(20, 20, 25, 0.9);
-      --glass: rgba(255, 255, 255, 0.03);
-      --border: rgba(255, 255, 255, 0.1);
+      --bg: #09090b;
+      --card: #18181b;
+      --nav: rgba(24, 24, 27, 0.8);
+      --text: #fafafa;
     }
 
-    * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       margin: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: radial-gradient(circle at top left, #1e103d, #050505);
-      color: white;
-      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    /* Tab Navigation */
-    .nav-bar {
+    /* --- MOBILE NAV (BOTTOM) --- */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: var(--nav);
+      backdrop-filter: blur(20px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      z-index: 1000;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #71717a;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    .nav-item.active { color: var(--primary); }
+    .nav-item svg { margin-bottom: 4px; }
+
+    /* --- CONTENT AREA --- */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 20px 100px; /* Extra padding for bottom nav */
+      scrollbar-width: none;
+    }
+    .app-content::-webkit-scrollbar { display: none; }
+
+    .view { display: none; animation: fadeIn 0.3s ease; }
+    .view.active { display: block; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- PREMIUM UI COMPONENTS --- */
+    .card {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .qr-preview-container {
+      background: #fff;
+      padding: 15px;
+      border-radius: 20px;
       display: flex;
       justify-content: center;
-      gap: 10px;
-      padding: 20px;
-      background: rgba(0,0,0,0.4);
-      backdrop-filter: blur(10px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      border-bottom: 1px solid var(--border);
+      margin: 20px auto;
+      width: fit-content;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
 
-    .tab-btn {
-      padding: 12px 30px;
-      border-radius: 100px;
-      border: 1px solid var(--border);
-      background: var(--glass);
-      color: #94a3b8;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .input-pill {
+      width: 100%;
+      background: #27272a;
+      border: 1px solid #3f3f46;
+      padding: 14px;
+      border-radius: 14px;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 15px;
     }
 
-    .tab-btn.active {
+    .btn-full {
+      width: 100%;
       background: var(--primary);
       color: white;
-      border-color: var(--primary);
-      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    .view { display: none; }
-    .view.active { display: grid; }
-
-    /* --- CREATE VIEW STYLES --- */
-    .create-grid {
-      grid-template-columns: 400px 1fr;
-      gap: 30px;
-    }
-
-    .settings-card, .preview-card {
-      background: var(--panel);
-      border-radius: 32px;
-      border: 1px solid var(--border);
-      padding: 30px;
-      backdrop-filter: blur(20px);
-    }
-
-    .section-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--primary);
-      margin: 20px 0 10px;
-      font-weight: 800;
-    }
-
-    input, select {
-      width: 100%;
-      background: #111;
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 12px;
-      color: white;
-      outline: none;
-    }
-
-    input:focus { border-color: var(--primary); }
-
-    .qr-preview-box {
-      background: white;
-      padding: 25px;
-      border-radius: 24px;
-      display: inline-block;
-      margin: 20px 0;
-    }
-
-    /* --- SCAN VIEW STYLES --- */
-    .scan-container {
-      max-width: 600px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
+    /* --- SCANNER OVERLAY --- */
     #reader {
       width: 100%;
       border-radius: 24px;
       overflow: hidden;
-      border: 2px solid var(--primary) !important;
       background: #000;
+      border: none !important;
     }
 
-    .result-card {
-      margin-top: 25px;
-      background: var(--glass);
-      padding: 20px;
-      border-radius: 16px;
-      border: 1px solid var(--primary);
-      display: none;
-      word-break: break-all;
+    .scan-overlay {
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 0 1000px rgba(0,0,0,0.5);
+      border-radius: 20px;
     }
 
-    .btn-action {
+    .result-modal {
       background: var(--primary);
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      border-radius: 14px;
-      font-weight: 700;
-      cursor: pointer;
+      padding: 15px;
+      border-radius: 16px;
       margin-top: 20px;
-    }
-
-    .btn-action:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3); }
-
-    @media (max-width: 900px) {
-      .create-grid { grid-template-columns: 1fr; }
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <nav class="nav-bar">
-    <button class="tab-btn active" onclick="switchTab('create-view', this)">✨ Create Pro</button>
-    <button class="tab-btn" onclick="switchTab('scan-view', this)">🔍 Scan Live</button>
-  </nav>
-
-  <div class="container">
+  <div class="app-content">
     
-    <div id="create-view" class="view active create-grid">
-      <div class="settings-card">
-        <h2 style="margin-top:0">Design Studio</h2>
-        
-        <div class="section-title">Content</div>
-        <input type="text" id="qr-data" placeholder="Paste URL or Text" oninput="updateQR()">
+    <div id="create-view" class="view active">
+      <h1 style="font-size: 1.8rem; margin-bottom: 5px;">QR-Sonuzz</h1>
+      <p style="color: #a1a1aa; margin-top: 0; font-size: 0.9rem;">Studio Edition</p>
 
-        <div class="section-title">Aesthetics</div>
+      <div class="qr-preview-container" id="qr-target"></div>
+
+      <div class="card">
+        <label style="display:block; margin-bottom:8px; font-size:0.8rem; font-weight:700; color:var(--primary)">CONTENT</label>
+        <input type="text" id="qr-data" class="input-pill" placeholder="Link or text..." oninput="updateQR()">
+        
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-            <select id="dot-type" onchange="updateQR()">
+          <div>
+            <label style="font-size:0.7rem; color:#71717a">DOT STYLE</label>
+            <select id="dot-type" class="input-pill" onchange="updateQR()">
                 <option value="rounded">Rounded</option>
                 <option value="dots">Dots</option>
-                <option value="classy">Luxury</option>
+                <option value="square">Basic</option>
             </select>
-            <input type="color" id="qr-color" value="#8B5CF6" oninput="updateQR()" style="height:45px; padding:2px">
+          </div>
+          <div>
+            <label style="font-size:0.7rem; color:#71717a">QR COLOR</label>
+            <input type="color" id="qr-color" value="#8B5CF6" oninput="updateQR()" style="width:100%; height:50px; border-radius:12px; background:none; border:none; padding:0">
+          </div>
         </div>
 
-        <div class="section-title">Branding</div>
-        <label style="font-size:0.8rem; color:#64748b">Upload Center Logo</label>
-        <input type="file" id="logo-file" accept="image/*" onchange="updateQR()" style="margin-top:5px">
+        <label style="display:block; margin-top:10px; font-size:0.7rem; color:#71717a">BRAND LOGO</label>
+        <input type="file" id="logo-file" accept="image/*" class="input-pill" style="font-size:0.8rem" onchange="updateQR()">
         
-        <button class="btn-action" style="width:100%" onclick="downloadQR()">Download 4K PNG</button>
-      </div>
-
-      <div class="preview-card" style="text-align:center">
-        <div class="qr-preview-box" id="qr-target"></div>
-        <p style="color:#64748b">Real-time Premium Preview</p>
+        <button class="btn-full" onclick="downloadQR()">Save to Photos</button>
       </div>
     </div>
 
-    <div id="scan-view" class="view scan-container">
-      <div class="settings-card">
-        <h2 style="margin-top:0">Ultimate Scanner</h2>
-        <p style="color:#94a3b8; margin-bottom:25px">Point your camera or upload a QR image</p>
-        
-        <div id="reader"></div>
-
-        <div id="scan-result" class="result-card">
-          <span class="section-title">Scanned Content:</span>
-          <p id="result-text" style="font-size:1.1rem; margin:10px 0"></p>
-          <button class="btn-action" style="padding:8px 20px; font-size:0.8rem" onclick="copyResult()">Copy to Clipboard</button>
-        </div>
+    <div id="scan-view" class="view">
+      <h1 style="font-size: 1.8rem;">Live Scanner</h1>
+      <div id="reader"></div>
+      
+      <div id="scan-result" class="result-modal">
+        <p style="margin:0; font-size:0.7rem; font-weight:800; text-transform:uppercase">Scanned Content:</p>
+        <p id="result-text" style="margin:5px 0; word-break:break-all; font-weight:600"></p>
+        <button onclick="copyText()" style="background:white; color:black; border:none; padding:8px 15px; border-radius:8px; font-weight:700; font-size:0.8rem">Copy Link</button>
       </div>
     </div>
 
   </div>
 
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="btn-create" onclick="switchTab('create')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
+      Create
+    </button>
+    <button class="nav-item" id="btn-scan" onclick="switchTab('scan')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Scan
+    </button>
+  </nav>
+
   <script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
 
   <script>
-    // --- APP LOGIC ---
-    function switchTab(tabId, btn) {
+    // --- NAVIGATION ---
+    function switchTab(mode) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
       
-      document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
-
-      if (tabId === 'scan-view') {
-        startScanner();
-      } else {
+      if(mode === 'create') {
+        document.getElementById('create-view').classList.add('active');
+        document.getElementById('btn-create').classList.add('active');
         stopScanner();
+      } else {
+        document.getElementById('scan-view').classList.add('active');
+        document.getElementById('btn-scan').classList.add('active');
+        startScanner();
       }
     }
 
-    // --- GENERATOR LOGIC ---
+    // --- GENERATOR ---
     const qrCode = new QRCodeStyling({
-      width: 300,
-      height: 300,
-      data: "https://qr-sonuzz.pro",
+      width: 250,
+      height: 250,
       dotsOptions: { type: "rounded", color: "#8B5CF6" },
       backgroundOptions: { color: "#ffffff" },
       imageOptions: { crossOrigin: "anonymous", margin: 10, imageSize: 0.3 }
@@ -245,7 +237,7 @@
       const type = document.getElementById("dot-type").value;
       const logoFile = document.getElementById("logo-file").files[0];
 
-      const options = { data: data, dotsOptions: { color: color, type: type } };
+      const options = { data, dotsOptions: { color, type } };
 
       if (logoFile) {
         const reader = new FileReader();
@@ -255,36 +247,34 @@
         qrCode.update(options);
       }
     }
+    updateQR();
 
     function downloadQR() {
-      qrCode.download({ name: "Sonuzz_QR", extension: "png" });
+      qrCode.download({ name: "Aswin_QR", extension: "png" });
     }
 
-    // --- SCANNER LOGIC ---
-    let html5QrCode;
-
+    // --- SCANNER ---
+    let scanner;
     function startScanner() {
-      html5QrCode = new Html5Qrcode("reader");
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-      html5QrCode.start({ facingMode: "environment" }, config, (decodedText) => {
-        document.getElementById('scan-result').style.display = 'block';
-        document.getElementById('result-text').innerText = decodedText;
-        // Optional: Vibrate on success
-        if (navigator.vibrate) navigator.vibrate(100);
-      });
+      scanner = new Html5Qrcode("reader");
+      scanner.start({ facingMode: "environment" }, 
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        (text) => {
+          document.getElementById('scan-result').style.display = 'block';
+          document.getElementById('result-text').innerText = text;
+          if (navigator.vibrate) navigator.vibrate(100);
+        }
+      ).catch(err => alert("Camera error: " + err));
     }
 
     function stopScanner() {
-      if (html5QrCode) {
-        html5QrCode.stop().catch(() => {});
-      }
+      if(scanner) scanner.stop().catch(() => {});
     }
 
-    function copyResult() {
-      const text = document.getElementById('result-text').innerText;
-      navigator.clipboard.writeText(text);
-      alert("Copied to clipboard!");
+    function copyText() {
+      const t = document.getElementById('result-text').innerText;
+      navigator.clipboard.writeText(t);
+      alert("Copied!");
     }
   </script>
 </body>
