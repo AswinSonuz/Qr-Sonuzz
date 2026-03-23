@@ -3,215 +3,289 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR-Sonuzz Ultimate | Design Studio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <title>QR-Sonuzz Premium Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #8B5CF6;
-      --bg: #030712;
-      --card: #111827;
-      --accent: #10b981;
+      --primary: #6366f1;
+      --secondary: #a855f7;
+      --bg: #0b0f1a;
+      --panel: rgba(23, 28, 45, 0.8);
+      --input: #1f2937;
     }
+
+    * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
 
     body {
       margin: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg);
-      background-image: radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0, transparent 50%), 
-                        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0, transparent 50%);
-      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: #fff;
       display: flex;
       justify-content: center;
-      align-items: center;
       min-height: 100vh;
-      padding: 20px;
+      overflow-x: hidden;
     }
 
-    .studio-container {
+    /* Main Layout */
+    .app-container {
       display: grid;
-      grid-template-columns: 1fr 350px;
-      gap: 2rem;
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 32px;
-      padding: 2.5rem;
+      grid-template-columns: 380px 1fr;
       width: 100%;
-      max-width: 1100px;
-      box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7);
+      max-width: 1400px;
     }
 
     @media (max-width: 900px) {
-      .studio-container { grid-template-columns: 1fr; }
+      .app-container { grid-template-columns: 1fr; }
     }
 
-    /* Left Side: Controls */
-    .controls { overflow-y: auto; max-height: 80vh; padding-right: 1rem; }
-    
-    h1 { font-size: 2.5rem; margin-top: 0; background: linear-gradient(to right, #fff, #9ca3af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-    .section-title { font-size: 0.75rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin: 2rem 0 1rem; }
-
-    .input-wrapper { margin-bottom: 1rem; }
-    label { display: block; font-size: 0.85rem; margin-bottom: 0.5rem; color: #9ca3af; }
-
-    select, input[type="text"], input[type="file"] {
-      width: 100%;
-      background: #1f2937;
-      border: 1px solid #374151;
-      padding: 12px;
-      border-radius: 12px;
-      color: white;
-      font-family: inherit;
+    /* Sidebar Controls */
+    .sidebar {
+      background: var(--panel);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(255,255,255,0.1);
+      padding: 2rem;
+      height: 100vh;
+      overflow-y: auto;
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .brand-header { margin-bottom: 2rem; }
+    .brand-header h1 { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; margin: 0; }
+    .brand-header span { color: var(--primary); }
 
-    /* Right Side: Preview */
-    .preview-pane {
+    .control-section {
       background: rgba(255,255,255,0.03);
-      border-radius: 24px;
+      padding: 1.2rem;
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 1rem;
+      display: block;
+      letter-spacing: 1px;
+    }
+
+    label { display: block; font-size: 0.85rem; margin-bottom: 0.5rem; color: #cbd5e1; }
+
+    input[type="text"], select {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid #374151;
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 1rem;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 40px;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* Preview Area */
+    .preview-zone {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
-      position: sticky;
-      top: 0;
+      padding: 4rem;
+      background: radial-gradient(circle at center, #1e1b4b 0%, #0b0f1a 100%);
     }
 
-    #canvas-container {
-      background: white;
-      padding: 15px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    .qr-card {
+      background: #fff;
+      padding: 40px;
+      border-radius: 30px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      position: relative;
     }
 
-    .download-btn {
-      margin-top: 2rem;
-      width: 100%;
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 16px;
-      border-radius: 14px;
-      font-weight: 700;
+    .action-bar {
+      margin-top: 3rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
       cursor: pointer;
-      transition: 0.3s;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .download-btn:hover { transform: scale(1.02); filter: brightness(1.2); }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #4f46e5; transform: translateY(-2px); }
 
-    /* Custom Scrollbar */
-    .controls::-webkit-scrollbar { width: 5px; }
-    .controls::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+    .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); }
+
+    /* Custom File Upload */
+    .file-input {
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
   </style>
 </head>
 <body>
 
-  <div class="studio-container">
-    <div class="controls">
-      <h1>QR-Sonuzz <span style="color:var(--primary)">•</span></h1>
-      
-      <div class="section-title">1. Content & Branding</div>
-      <div class="input-wrapper">
-        <label>URL or Text</label>
-        <input type="text" id="qr-data" placeholder="https://aswin.design" oninput="updateQR()">
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="brand-header">
+        <h1>QR-Sonuzz <span>Pro Studio</span></h1>
       </div>
-      <div class="input-wrapper">
+
+      <div class="control-section">
+        <span class="section-label">1. Basic Info</span>
+        <label>Link or Message</label>
+        <input type="text" id="qr-data" placeholder="https://..." oninput="updateQR()">
+      </div>
+
+      <div class="control-section">
+        <span class="section-label">2. Aesthetic Style</span>
+        <div class="grid-2">
+          <div>
+            <label>Dot Type</label>
+            <select id="dot-type" onchange="updateQR()">
+              <option value="rounded">Rounded</option>
+              <option value="dots">Dots</option>
+              <option value="classy">Luxury</option>
+              <option value="square">Basic</option>
+            </select>
+          </div>
+          <div>
+            <label>Corners</label>
+            <select id="corner-type" onchange="updateQR()">
+              <option value="extra-rounded">Curved</option>
+              <option value="dot">Circle</option>
+              <option value="square">Sharp</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <span class="section-label">3. Gradient Engine</span>
+        <div class="grid-2">
+          <div>
+            <label>Start Color</label>
+            <input type="color" id="color-1" value="#6366f1" oninput="updateQR()">
+          </div>
+          <div>
+            <label>End Color</label>
+            <input type="color" id="color-2" value="#a855f7" oninput="updateQR()">
+          </div>
+        </div>
+        <label style="margin-top:10px">Gradient Direction</label>
+        <select id="gradient-rotation" onchange="updateQR()">
+          <option value="0">Horizontal</option>
+          <option value="1.57">Vertical</option>
+          <option value="0.78">Diagonal</option>
+        </select>
+      </div>
+
+      <div class="control-section">
+        <span class="section-label">4. Branding</span>
         <label>Upload Center Logo</label>
-        <input type="file" id="logo-input" accept="image/*" onchange="updateQR()">
+        <input type="file" id="logo-upload" class="file-input" accept="image/*" onchange="updateQR()">
+        <label style="margin-top:15px">Logo Size</label>
+        <input type="range" id="logo-size" min="0.1" max="0.5" step="0.05" value="0.3" oninput="updateQR()" style="width:100%">
       </div>
 
-      <div class="section-title">2. Body Styling</div>
-      <div class="grid-2">
-        <div class="input-wrapper">
-          <label>Dot Style</label>
-          <select id="dot-style" onchange="updateQR()">
-            <option value="rounded">Rounded</option>
-            <option value="dots">Dots</option>
-            <option value="classy">Classy</option>
-            <option value="classy-rounded">Classy Rounded</option>
-            <option value="square">Square</option>
-          </select>
-        </div>
-        <div class="input-wrapper">
-          <label>Color 1</label>
-          <input type="color" id="color-1" value="#8B5CF6" onchange="updateQR()" style="height:45px">
-        </div>
-      </div>
-
-      <div class="section-title">3. Eye (Corner) Design</div>
-      <div class="grid-2">
-        <div class="input-wrapper">
-          <label>Corner Shape</label>
-          <select id="corner-style" onchange="updateQR()">
-            <option value="extra-rounded">Extra Rounded</option>
-            <option value="square">Square</option>
-            <option value="dot">Dot</option>
-          </select>
-        </div>
-        <div class="input-wrapper">
-          <label>Eye Color</label>
-          <input type="color" id="eye-color" value="#10b981" onchange="updateQR()" style="height:45px">
-        </div>
-      </div>
+      <p style="text-align: center; color: #4b5563; font-size: 0.75rem;">Premium Studio Version 4.0<br>Designed by Aswin</p>
     </div>
 
-    <div class="preview-pane">
-      <div id="canvas-container"></div>
-      <button class="download-btn" onclick="downloadQR()">Download PNG (4K)</button>
-      <p style="font-size: 0.7rem; color: #64748b; margin-top: 1rem;">Created by Aswin • Pro Edition</p>
+    <div class="preview-zone">
+      <div class="qr-card">
+        <div id="qr-canvas"></div>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-outline" onclick="location.reload()">Reset Design</button>
+        <button class="btn btn-primary" onclick="downloadQR()">Download 4K PNG</button>
+      </div>
     </div>
   </div>
 
   <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
   <script>
     const qrCode = new QRCodeStyling({
-      width: 300,
-      height: 300,
-      data: "https://aswin.design",
+      width: 320,
+      height: 320,
+      data: "https://google.com",
       image: "",
-      dotsOptions: { type: "rounded", color: "#8B5CF6" },
-      cornersSquareOptions: { type: "extra-rounded", color: "#10b981" },
+      dotsOptions: {
+        type: "rounded",
+        gradient: {
+          type: "linear",
+          rotation: 0,
+          colorStops: [{ offset: 0, color: "#6366f1" }, { offset: 1, color: "#a855f7" }]
+        }
+      },
       backgroundOptions: { color: "#ffffff" },
-      imageOptions: { crossOrigin: "anonymous", margin: 8, imageSize: 0.4 }
+      imageOptions: { crossOrigin: "anonymous", margin: 10, imageSize: 0.3 },
+      qrOptions: { errorCorrectionLevel: "H" }
     });
 
-    qrCode.append(document.getElementById("canvas-container"));
+    qrCode.append(document.getElementById("qr-canvas"));
 
     function updateQR() {
-      const data = document.getElementById("qr-data").value;
-      const logoFile = document.getElementById("logo-input").files[0];
-      const dotType = document.getElementById("dot-style").value;
-      const dotColor = document.getElementById("color-1").value;
-      const cornerType = document.getElementById("corner-style").value;
-      const eyeColor = document.getElementById("eye-color").value;
+      const data = document.getElementById("qr-data").value || "https://google.com";
+      const dotType = document.getElementById("dot-type").value;
+      const cornerType = document.getElementById("corner-type").value;
+      const c1 = document.getElementById("color-1").value;
+      const c2 = document.getElementById("color-2").value;
+      const rotation = document.getElementById("gradient-rotation").value;
+      const logoSize = document.getElementById("logo-size").value;
+      const logoFile = document.getElementById("logo-upload").files[0];
 
-      const options = {
-        data: data || "https://aswin.design",
+      const updateData = {
+        data: data,
         dotsOptions: {
           type: dotType,
-          color: dotColor
+          gradient: {
+            type: "linear",
+            rotation: parseFloat(rotation),
+            colorStops: [{ offset: 0, color: c1 }, { offset: 1, color: c2 }]
+          }
         },
         cornersSquareOptions: {
           type: cornerType,
-          color: eyeColor
+          color: c1
+        },
+        imageOptions: {
+            imageSize: parseFloat(logoSize)
         }
       };
 
       if (logoFile) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          qrCode.update({ ...options, image: e.target.result });
+          qrCode.update({ ...updateData, image: e.target.result });
         };
         reader.readAsDataURL(logoFile);
       } else {
-        qrCode.update(options);
+        qrCode.update(updateData);
       }
     }
 
     function downloadQR() {
-      qrCode.download({ name: "Sonuzz-Ultimate-QR", extension: "png" });
+      qrCode.download({ name: "QR_Sonuzz_Premium", extension: "png" });
     }
   </script>
 </body>
